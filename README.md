@@ -45,7 +45,7 @@ With a flake-based setup, add the following to `flake.nix`:
         nixosConfigurations.a-hostname = nixpkgs.lib.nixosSystem {
             modules = [
                 septabee-nix.nixosModules.default
-                ./septabee.nix # or wherever the septabee stuff will go. or just define the module here
+                ./configuration.nix # or wherever the septabee stuff will go. or just define the module here
             ]
         } # replace a-hostname with a hostname
 
@@ -57,7 +57,7 @@ With a flake-based setup, add the following to `flake.nix`:
 ```
 
 ```nix
-# septabee.nix
+# configuration.nix
 
 { lib, config, pkgs, ... }:
 
