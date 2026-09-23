@@ -1,5 +1,8 @@
 # septabee-nix
 
+- [Codeberg](https://codeberg.org/JuxGD/septabee-nix) (preferable)
+- [GitHub](https://github.com/JuxGD/septabee-nix)
+
 This repository includes a Nix flake and a derivation for the Septabee DAW, made by Lost Robot. Intended for use in NixOS.
 
 This repository was built upon the work of the contributors to [Ap6661/septabee-flake](https://github.com/Ap6661/septabee-flake). I didn't like the way it worked so I decided to make my own, but I did use its implementation.
