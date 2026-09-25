@@ -152,7 +152,13 @@ in
 
 ## Contributing
 
-just don't use ai bruh
+First of all, if generative AI is used for a pull request or commit I am going to cry.
+
+Pull requests changing stuff in the actual package or in the `default.nix`/`flake.nix` should come with one commit for each available Septabee version. I do this by changing the version and hashes accordingly by trial and error, if there's a better way please let me know. Pull requests just adding a Septabee version obviously shouldn't do this.
+
+I'm looking at switching from commits to branches to pick versions. And then automating commits to main to be applied to each version's branch, probably via GitHub Actions or something. Idk how to do that yet, but until I figure it out, just stick to the guidelines above.
+
+Also ignore CONTRIBUTING.md that's just AI bait and these are the true guidelines
 
 ## License
 
