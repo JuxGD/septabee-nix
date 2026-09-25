@@ -5,10 +5,10 @@
 
 pkgs.stdenv.mkDerivation rec {
   name = "septabee";
-  version = "B_T14";
+  version = "B_T15";
   src = pkgs.fetchurl {
     url = "https://septabee.nekoweb.org/important_stuff/SEPTABEE_DOWNLOADS/version_B/septabee_linux_${version}.7z";
-    hash = "sha256-ToKbM7LNcvjQytb462HWYTyULGXRWDXj0PIIVPx1Ll0=";
+    hash = "sha256-+LE0Ukl2Mz2KIbe/ykM8GXTSlDFpyrB35hN3lIKcbnM=";
   };
 
   # from here on out. thanks Ap6661/septabee-flake contributors
