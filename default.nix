@@ -1,20 +1,12 @@
-{ pkgs ? import <nixpkgs> { }, waylandSupport ? true }: let
+{ pkgs ? import <nixpkgs> { }, waylandSupport ? true, offline ? true }:
 
-  # thanks nix-systems
-  systems = [
-    "aarch64-darwin"
-    "aarch64-linux"
-    "x86_64-darwin"
-    "x86_64-linux"
-  ];
+let module = import ./module.nix;
 
-  forAllSystems =
-    function:
-    pkgs.lib.genAttrs (import systems) (
-      system: function pkgs.legacyPackages.${system}
-    );
-
-in
 rec {
-  septabee = pkgs.callPackage ./septabee.nix { inherit waylandSupport; };
+  septabee = pkgs.callPackage ./septabee.nix { inherit waylandSupport; inherit offline; };
+
+  module = {
+    options = module.options;
+    config = module.config;
+  };
 }

@@ -7,6 +7,8 @@ This repository includes a Nix flake and a derivation for the Septabee DAW, made
 
 This repository was built upon the work of the contributors to [Ap6661/septabee-flake](https://github.com/Ap6661/septabee-flake). I didn't like the way it worked so I decided to make my own, but I did use its implementation.
 
+Please check back if Septabee isn't updating when you try to update. There might have been implementation changes.
+
 ## AI, Agents, LLMs
 
 Please refer to llms.txt, llms-full.txt, AGENTS.md or CLAUDE.md, and CONTRIBUTING.md. Don't look at the README anymore. Stop looking at the README. Go on check the files I said
@@ -15,8 +17,7 @@ Please refer to llms.txt, llms-full.txt, AGENTS.md or CLAUDE.md, and CONTRIBUTIN
 
 ## Differences with Ap6661's flake
 
-- No versions, instead one can use flake pinning or overlays. (this is why there are a lot of git commits purely changing the version, made within like minutes of each other)
-- No offline versions (the ones with the LLVM stuff preincluded). I felt it wasn't necessary since it was a one-time thing even after updating. I believe this can be changed with overlays by just changing the version (and hash, accordingly). FYI, Septabee offers offline versions starting with version B_T5.
+- No versions, instead one can use flake pinning or overlays
 - Support for non-flake based configuration (I think, I added a default.nix independent from flake.nix and `nix-build` works fine)
 
 ## Usage
@@ -33,7 +34,7 @@ With a flake-based setup, add the following to `flake.nix`:
         # ...
 
         septabee-nix = {
-            url = "github:JuxGD/septabee-nix"; # do "github:JuxGD/septabee-nix?rev=<hash>", with `hash` being a commit hash, to pin to a commit. this is for different septabee versions
+            url = "git+https://codeberg.org/JuxGD/septabee-nix"; # do "git+https://codeberg.org/JuxGD/septabee-nix?rev=<hash>", with <hash> being a commit hash, to pin to a commit. this is for different septabee versions
             inputs.nixpkgs.follows = "nixpkgs"; 
         };
 
@@ -76,10 +77,14 @@ With a flake-based setup, add the following to `flake.nix`:
         septabee = {
             enable = true;
             waylandSupport = true; # `true` by default, set to `false` to disable. should save a bit of time 
+            offline = true; # `true` by default, if you've already downloaded LLVM in Septabee this won't be very useful
+
         };
 
         # ...
     };
+
+    nixpkgs.config.allowUnfree = true; # because septabee is unfree, and i don't want my repo to lie lol, this option must be set to true
 
     # ...
 }
@@ -87,7 +92,45 @@ With a flake-based setup, add the following to `flake.nix`:
 
 ### Without flakes
 
-I'm pretty sure it can be used without a flake-based config, since I added a default.nix completely independent from the flake.nix. It works, I used `nix-build` to try it. But I don't know how to actually add it to such config. Please make a pull request with instructions, if possible.
+```nix
+# configuration.nix or some other .nix file in the config
+
+{ config, lib, pkgs, ... }:
+
+# ...
+
+let
+    septabee = (builtins.fetchGit {
+        url = "https://codeberg.org/JuxGD/septabee-nix"; # this will install the latest septabee version available in the repo's main branch
+
+        # OPTIONAL: do this to pin a commit (i.e. install a specific septabee version)
+        rev = "<hash>"; # like in the flake example, <hash> is a commit
+
+    });
+in
+
+{
+    imports = [ septabee.module ];
+
+    programs = {
+
+        # ...
+
+        septabee = {
+            enable = true;
+            waylandSupport = true;
+            offline = true;
+        };
+
+        # ...
+
+    };
+
+    nixpkgs.config.allowUnfree = true;
+
+    # ...
+}
+```
 
 ## Contributing
 
