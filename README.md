@@ -100,18 +100,25 @@ With a flake-based setup, add the following to `flake.nix`:
 # ...
 
 let
-    septabee = (builtins.fetchGit {
+    septabee = import (builtins.fetchGit {
         url = "https://codeberg.org/JuxGD/septabee-nix"; # this will install the latest septabee version available in the repo's main branch
 
-        # OPTIONAL: do this to pin a commit (i.e. install a specific septabee version)
-        rev = "<hash>"; # like in the flake example, <hash> is a commit
+        # IMPORTANT
+        rev = "<latest commit>"; # you MUST set a commit here. there is no other way (i think).
+        # note that, for now, only version B_T15 and up have the module and offline septabee support for non-flake-based configurations
+        # this may be workaround-able by overlaying or overriding the package definition, but these are not presented in this example
+        #
+        # i will update this as soon as i can :p
 
     });
 in
 
 {
-    imports = [ septabee.module ];
+    imports = [
+        septabee.module # again, only B_T15 and up for now. will remove these comments when this isn't the case anymore
+    ];
 
+    # B_T15 and up
     programs = {
 
         # ...
@@ -125,6 +132,17 @@ in
         # ...
 
     };
+
+    # B_14 and below
+    environment.systemPackages = [
+
+        # ...
+
+        septabee.septabee
+
+        # ...
+    
+    ];
 
     nixpkgs.config.allowUnfree = true;
 
