@@ -17,7 +17,7 @@
 
       waylandSupport = lib.mkOption {
         type = lib.types.bool;
-        default = false;
+        default = true;
         description = "Whether Septabee should have Wayland support";
       };
 
