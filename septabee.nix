@@ -22,15 +22,15 @@
 
 let 
   name = "septabee";
-  version = "B_T16";
+  version = "B_T2";
   package =
     if ( offline == true ) then "${version}_offline"
     else version;
   src = fetchurl {
     url = "https://septabee.nekoweb.org/important_stuff/SEPTABEE_DOWNLOADS/version_B/septabee_linux_${package}.7z";
     hash =
-      if ( offline == true ) then "sha256-1cimDVeFf/DODIi1qamUKhKrze8/ReceK/iUHqlpKuM="
-      else "sha256-L7GE0iFFSplVqymRvWkCjNadl1XVn8e3mpjsS1Y0Crs=";
+      if ( offline == true ) then ""
+      else "sha256-OMnbRBTku8yi4b3Ay7d70EbB/e2Qh+PfzK2O8qRFoaA=";
   };
 in
 
