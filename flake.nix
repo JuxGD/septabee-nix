@@ -10,7 +10,7 @@
     pkgs = import nixpkgs { inherit system; config.allowUnfree = true; };
   in {
     packages.x86_64-linux = {
-      septabee = pkgs.callPackage ./septabee.nix { };
+      septabee = pkgs.callPackage ./septabee.nix { waylandSupport = true; offline = true; };
     };
 
     nixosModules.default = import ./module.nix;

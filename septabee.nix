@@ -16,8 +16,8 @@
 , zstd
 , ncurses
 , makeDesktopItem
-, waylandSupport ? true
-, offline ? true
+, waylandSupport
+, offline
 }:
 
 let 
