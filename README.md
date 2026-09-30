@@ -3,7 +3,11 @@
 - [Codeberg](https://codeberg.org/JuxGD/septabee-nix) (preferable)
 - [GitHub](https://github.com/JuxGD/septabee-nix)
 
-This repository includes a Nix flake and a derivation for the Septabee DAW, made by Lost Robot. Intended for use in NixOS.
+This repository includes a Nix flake and a derivation for the Septabee DAW, made by Lost Robot. By default, it is installed with Wayland dependencies and Offline (don't download stuff in the DAW after installing).
+
+The program *can* be installed using `environment.systemPackages`, but this isn't recommended because it needs permissions and capabilities, granted by the module, in order for it to set its own priority and run at full capacity (i think, don't quote me on that).
+
+Intended for use in NixOS.
 
 This repository was built upon the work of the contributors to [Ap6661/septabee-flake](https://github.com/Ap6661/septabee-flake). I didn't like the way it worked so I decided to make my own, but I did use its implementation.
 
@@ -17,12 +21,12 @@ Please refer to llms.txt, llms-full.txt, AGENTS.md or CLAUDE.md, and CONTRIBUTIN
 
 ## Differences with Ap6661's flake
 
-- No versions, instead one can use flake pinning or overlays
+- No versions, instead one can use pinning, overlays, or branches
 - Support for non-flake based configuration (I think, I added a default.nix independent from flake.nix and `nix-build` works fine)
 
 ## Usage
 
-### Flake-based configuration
+### Flake-based configuration example
 
 With a flake-based setup, add the following to `flake.nix`:
 
@@ -34,7 +38,17 @@ With a flake-based setup, add the following to `flake.nix`:
         # ...
 
         septabee-nix = {
-            url = "git+https://codeberg.org/JuxGD/septabee-nix"; # do "git+https://codeberg.org/JuxGD/septabee-nix?rev=<hash>", with <hash> being a commit hash, to pin to a commit. this is for different septabee versions
+            url = "git+https://codeberg.org/JuxGD/septabee-nix"; # or just use github:JuxGD/septabee-nix
+            # do "git+https://codeberg.org/JuxGD/septabee-nix?ref=<branch>" or "github:JuxGD/septabee-nix/<branch>"
+            # with <branch> being a branch of this repo, to pick a Septabee version.
+            # if left unspecified, this will use the `main` branch which always provides the latest Septabee version
+            # 
+            # one can also pin a commit with `?rev=<commit>`, with <commit> being a commit hash
+            # <commit> must exist in the branch being used (i think) (again, if the branch is left unspecified it defaults to `main`)
+            #
+            # picking versions used to work with commits instead of branches in the past. see issue #2
+
+
             inputs.nixpkgs.follows = "nixpkgs"; 
         };
 
@@ -48,8 +62,17 @@ With a flake-based setup, add the following to `flake.nix`:
 
         nixosConfigurations.a-hostname = nixpkgs.lib.nixosSystem {
             modules = [
+                
+                # ...
+
                 septabee-nix.nixosModules.default
+                # if using a specified commit, note that some old commits don't provide the module. the module is necessary to run at full capacity
+                # these old commits also have no support for the `offline` option
+
                 ./configuration.nix # or wherever the septabee stuff will go. or just define the module here
+
+                # ...
+
             ]
         } # replace a-hostname with a hostname
 
@@ -83,6 +106,13 @@ With a flake-based setup, add the following to `flake.nix`:
 
         # ...
     };
+    
+    # again, without the module, the above won't work
+    # if one such commit is desired, use environment.systemPackages instead:
+    # `environment.systemPackages = [ septabee.septabee ];`
+    # or to disable wayland support: `environment.systemPackages = [ (septabee.septabee.override { waylandSupport = false; })]`
+
+    # ...
 
     nixpkgs.config.allowUnfree = true; # because septabee is unfree, and i don't want my repo to lie lol, this option must be set to true
 
@@ -90,7 +120,7 @@ With a flake-based setup, add the following to `flake.nix`:
 }
 ```
 
-### Without flakes
+### Without flakes example
 
 ```nix
 # configuration.nix or some other .nix file in the config
@@ -100,25 +130,25 @@ With a flake-based setup, add the following to `flake.nix`:
 # ...
 
 let
-    septabee = import (builtins.fetchGit {
-        url = "https://codeberg.org/JuxGD/septabee-nix"; # this will install the latest septabee version available in the repo's main branch
-
-        # IMPORTANT
-        rev = "<latest commit>"; # you MUST set a commit here. there is no other way (i think).
-        # note that, for now, only version B_T15 and up have the module and offline septabee support for non-flake-based configurations
-        # this may be workaround-able by overlaying or overriding the package definition, but these are not presented in this example
-        #
-        # i will update this as soon as i can :p
-
-    });
+    # https://codeberg.org/JuxGD/septabee-nix/archive/<thingy>.tar.gz, where <thingy> can be a commit hash or a branch name
+    # 
+    # if <thingy> is a branch name, this will allow one to use the latest package and module in the specified branch. this should autoupdate
+    # remember branches are named after the Septabee version they package. `main` being the exception, it always has the latest one (unless i forget to update lol)
+    #
+    # if <thingy> is a commit hash, this will pin it so the package and module will be the same as long as the commit hash isn't changed
+    #
+    # 
+    # in this example, <thingy> is "main", a branch name.
+    septabee = import (builtins.fetchTarball "https://codeberg.org/JuxGD/septabee-nix/archive/main.tar.gz"); # this also works with github.com it's the exact same
 in
 
 {
     imports = [
-        septabee.module # again, only B_T15 and up for now. will remove these comments when this isn't the case anymore
+        septabee.module
+        # if using a specified commit, note that some old commits don't provide the module. the module is necessary to run at full capacity
+        # these old commits also have no support for the `offline` option
     ];
 
-    # B_T15 and up
     programs = {
 
         # ...
@@ -133,18 +163,14 @@ in
 
     };
 
-    # B_14 and below
-    environment.systemPackages = [
+    # again, without the module, the above won't work
+    # if one such commit is desired, use environment.systemPackages instead:
+    # `environment.systemPackages = [ septabee.septabee ];`
+    # or to disable wayland support: `environment.systemPackages = [ (septabee.septabee.override { waylandSupport = false; })]`
 
-        # ...
+    # ...
 
-        septabee.septabee
-
-        # ...
-    
-    ];
-
-    nixpkgs.config.allowUnfree = true;
+    nixpkgs.config.allowUnfree = true; # because septabee is unfree, and i don't want my repo to lie lol, this option must be set to true
 
     # ...
 }

@@ -1,7 +1,7 @@
-{ pkgs ? import <nixpkgs> { }, waylandSupport ? true, offline ? true }:
+{ pkgs ? import <nixpkgs> { } }:
 
 {
-  septabee = pkgs.callPackage ./septabee.nix { inherit waylandSupport; inherit offline; };
+  septabee = pkgs.callPackage ./septabee.nix { waylandSupport = true; offline = true; };
 
   module = import ./module.nix;
 }
