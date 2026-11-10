@@ -27,7 +27,7 @@ let
     if ( offline == true ) then "${version}_offline"
     else version;
   src = fetchurl {
-    url = "https://septabee.nekoweb.org/important_stuff/SEPTABEE_DOWNLOADS/version_B/septabee_linux_${package}.7z";
+    url = "https://downloads.septabee.com/SEPTABEE_DOWNLOADS/version_B/septabee_linux_${package}.7z";
     hash =
       if ( offline == true ) then "sha256-qNssCOfnjwoLfD65MXyNiDhGthZrlQ4/2cupByn5RZs="
       else "sha256-vWCu08ql44x2fdNfMcGuPYSKS7Ap6dpzPikNlKp5XaI=";
