@@ -16,6 +16,7 @@
 , zstd
 , ncurses
 , makeDesktopItem
+, makeBinaryWrapper # thanks Ap6661
 , waylandSupport
 , offline
 }:
@@ -49,12 +50,14 @@ stdenv.mkDerivation rec {
     url = "https://septabee.nekoweb.org/important_stuff/icon.png";
     sha256 = "sha256-snq/nOYU2gPzC4VR558VjeQ8oXmQE82IolNDDixvtTU=";
   };
+
+  dontStrip = true; # thanks Ap6661
+
   runtimeDependencies = [
     jack2 # this one i added myself. septabee version B_T9 added support for this. https://septabee.miraheze.org/wiki/Changelog#Version_B_T9_[3]
     pipewire
     vulkan-loader
-  ]
-  ++ (lib.optionals waylandSupport [
+  ] ++ (lib.optionals waylandSupport [
     wayland
     libxkbcommon
   ]);
@@ -62,6 +65,7 @@ stdenv.mkDerivation rec {
   nativeBuildInputs = [
     p7zip
     autoPatchelfHook
+    makeBinaryWrapper
   ];
 
   buildInputs = [
@@ -100,6 +104,24 @@ stdenv.mkDerivation rec {
     mkdir -p "$out/bin"
     cp -r ./linux/* "$out/bin"
     cp -r "$desktopItems/share" "$out"
+    runHook postInstall
+  '';
+
+  # thanks Ap6661
+  postFixup = ''
+    wrapProgram "$out/bin/septabee" \
+      --set SEPTABEE_LINK_THINGY \
+        "$(cat "$NIX_CC/nix-support/dynamic-linker")" \
+      --set SEPTABEE_LIBRARBY \
+        "${lib.makeLibraryPath ([ 
+          stdenv.cc.cc.lib
+          libx11
+          pipewire
+          vulkan-loader
+        ] ++ (lib.optionals waylandSupport [
+          wayland
+          libxkbcommon
+        ]))}"
   '';
 
   meta = {
