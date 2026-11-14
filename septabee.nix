@@ -30,7 +30,7 @@ let
     url = "https://septabee.nekoweb.org/important_stuff/SEPTABEE_DOWNLOADS/version_B/septabee_linux_${package}.7z";
     hash =
       if ( offline == true ) then "sha256-yV2eA9k6ghGXbZUdNGQZuztcQGoDFfxbWCnQN952FW0="
-      else "sha256-yV2eA9k6ghGXbZUdNGQZuztcQGoDFfxbWCnQN952FW0=";
+      else "sha256-mJ/ur7XA+unFvi+ua5fWRNxJfI60TVhUAYyHF/cLJ/4=";
   };
 in
 
