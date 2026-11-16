@@ -23,15 +23,15 @@
 
 let 
   name = "septabee";
-  version = "B_T29";
+  version = "B_T30";
   package =
     if ( offline == true ) then "${version}_offline"
     else version;
   src = fetchurl {
     url = "https://downloads.septabee.com/SEPTABEE_DOWNLOADS/septabee_linux_${package}.7z";
     hash =
-      if ( offline == true ) then "sha256-XYKC3VvgwuD29IoXAETKhJlT44yoTNYvVcfTqU/y+Ik="
-      else "sha256-Bi7GhzdyMpbgd616XImvl/WLZ6GlPhSjijDVbG1g5j4=";
+      if ( offline == true ) then "sha256-D6caOX+h4gxiG5ObcJOeIGM62ygbQR5FRbXZ7Tp2gAo="
+      else "sha256-hVo+Tnh7jarcqdH7rqYMkOEll9cANUF6XmJ7s3QldnQ=";
   };
 in
 
